@@ -1,7 +1,7 @@
 <!--
 				Tip 1: You can change the background color of the main header using: data-background-color="blue | purple | light-blue | green | orange | red"
 		-->
-<div class="main-header" data-background-color="red">
+<div class="main-header" data-background-color="dark">
     <!-- Logo Header -->
     <div class="logo-header">
 

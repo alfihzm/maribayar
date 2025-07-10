@@ -26,4 +26,9 @@ class M_user extends CI_Model
             ->get('pelanggan')
             ->row();
     }
+
+    public function get_petugas()
+    {
+        return $this->db->where('id_level', 2)->get('user')->result();
+    }
 }
