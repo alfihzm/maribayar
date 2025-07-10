@@ -11,11 +11,6 @@
                         <div class="card-header">
                             <div class="card-head-row">
                                 <div class="card-title">Daftar Pembayaran</div>
-                                <div class="card-tools">
-                                    <a href="#" class="btn btn-primary btn-round btn-sm">
-                                        <i class="fas fa-plus"></i> Tambah Pembayaran
-                                    </a>
-                                </div>
                             </div>
                         </div>
 
@@ -35,22 +30,22 @@
                                     </thead>
                                     <tbody>
                                         <?php if (!empty($pembayaran)): ?>
-                                        <?php foreach ($pembayaran as $p): ?>
-                                        <tr>
-                                            <td><?php echo $p->id_pembayaran; ?></td>
-                                            <td><?php echo $p->nama_pelanggan; ?></td>
-                                            <td><?php echo $p->bulan . ' ' . $p->tahun; ?></td>
-                                            <td>Rp <?php echo number_format($p->biaya_admin, 0, ',', '.'); ?></td>
-                                            <td>Rp <?php echo number_format($p->total_bayar, 0, ',', '.'); ?></td>
-                                            <td><?php echo date('d-m-Y', strtotime($p->tanggal_pembayaran)); ?></td>
-                                            <td><?php echo $p->nama_admin; ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
+                                            <?php foreach ($pembayaran as $p): ?>
+                                                <tr>
+                                                    <td><?php echo $p->id_pembayaran; ?></td>
+                                                    <td><?php echo $p->nama_pelanggan; ?></td>
+                                                    <td><?php echo $p->bulan . ' ' . $p->tahun; ?></td>
+                                                    <td>Rp <?php echo number_format($p->biaya_admin, 0, ',', '.'); ?></td>
+                                                    <td>Rp <?php echo number_format($p->total_bayar, 0, ',', '.'); ?></td>
+                                                    <td><?php echo date('d-m-Y', strtotime($p->tanggal_pembayaran)); ?></td>
+                                                    <td><?php echo $p->nama_admin; ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
                                         <?php else: ?>
-                                        <tr>
-                                            <td colspan="7" class="text-center text-muted">Belum ada data pembayaran.
-                                            </td>
-                                        </tr>
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted">Belum ada data pembayaran.
+                                                </td>
+                                            </tr>
                                         <?php endif; ?>
                                     </tbody>
                                 </table>

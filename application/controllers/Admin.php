@@ -16,10 +16,14 @@ class Admin extends CI_Controller
 
     public function index()
     {
+        $this->load->model('M_pelanggan');
+        $data['total_pelanggan'] = $this->M_pelanggan->count_all();
+        $data['recent_pelanggan'] = $this->M_pelanggan->get_recent();
+
         $this->load->view('layouts/admin/admin_header');
         $this->load->view('layouts/admin/admin_navbar');
         $this->load->view('layouts/admin/admin_sidebar');
-        $this->load->view('admin/dashboard');
+        $this->load->view('admin/dashboard', $data);
         $this->load->view('layouts/admin/admin_footer');
     }
 

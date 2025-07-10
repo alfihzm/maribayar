@@ -11,11 +11,6 @@
                         <div class="card-header">
                             <div class="card-head-row">
                                 <div class="card-title">Daftar Tagihan</div>
-                                <div class="card-tools">
-                                    <a href="#" class="btn btn-primary btn-round btn-sm">
-                                        <i class="fas fa-plus"></i> Tambah Tagihan
-                                    </a>
-                                </div>
                             </div>
                         </div>
 

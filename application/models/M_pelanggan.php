@@ -13,4 +13,17 @@ class M_pelanggan extends CI_Model
             ->get()
             ->result();
     }
+
+    public function count_all()
+    {
+        return $this->db->count_all('pelanggan');
+    }
+
+    public function get_recent($limit = 5)
+    {
+        return $this->db->order_by('id_pelanggan', 'DESC')
+            ->limit($limit)
+            ->get('pelanggan')
+            ->result();
+    }
 }

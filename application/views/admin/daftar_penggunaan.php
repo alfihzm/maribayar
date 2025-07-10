@@ -11,11 +11,6 @@
                         <div class="card-header">
                             <div class="card-head-row">
                                 <div class="card-title">Daftar Penggunaan</div>
-                                <div class="card-tools">
-                                    <a href="#" class="btn btn-primary btn-round btn-sm">
-                                        <i class="fas fa-plus"></i> Tambah Penggunaan
-                                    </a>
-                                </div>
                             </div>
                         </div>
 
@@ -36,23 +31,23 @@
                                     </thead>
                                     <tbody>
                                         <?php if (!empty($penggunaan)): ?>
-                                        <?php foreach ($penggunaan as $p): ?>
-                                        <tr>
-                                            <td><?php echo $p->id_penggunaan; ?></td>
-                                            <td><?php echo $p->id_pelanggan; ?></td>
-                                            <td><?php echo $p->nama_pelanggan; ?></td>
-                                            <td><?php echo $p->bulan; ?></td>
-                                            <td><?php echo $p->tahun; ?></td>
-                                            <td><?php echo $p->meter_awal; ?></td>
-                                            <td><?php echo $p->meter_akhir; ?></td>
-                                            <td><?php echo $p->daya; ?> VA</td>
-                                        </tr>
-                                        <?php endforeach; ?>
+                                            <?php foreach ($penggunaan as $p): ?>
+                                                <tr>
+                                                    <td><?php echo $p->id_penggunaan; ?></td>
+                                                    <td><?php echo $p->id_pelanggan; ?></td>
+                                                    <td><?php echo $p->nama_pelanggan; ?></td>
+                                                    <td><?php echo $p->bulan; ?></td>
+                                                    <td><?php echo $p->tahun; ?></td>
+                                                    <td><?php echo $p->meter_awal; ?></td>
+                                                    <td><?php echo $p->meter_akhir; ?></td>
+                                                    <td><?php echo $p->daya; ?> VA</td>
+                                                </tr>
+                                            <?php endforeach; ?>
                                         <?php else: ?>
-                                        <tr>
-                                            <td colspan="8" class="text-center text-muted">Belum ada data penggunaan.
-                                            </td>
-                                        </tr>
+                                            <tr>
+                                                <td colspan="8" class="text-center text-muted">Belum ada data penggunaan.
+                                                </td>
+                                            </tr>
                                         <?php endif; ?>
                                     </tbody>
                                 </table>

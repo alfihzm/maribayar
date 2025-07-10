@@ -51,7 +51,7 @@
                             <p> Beranda </p>
                         </a>
                         <a href="<?= base_url('admin/profil') ?>">
-                            <i class="fas fa-user"></i>
+                            <i class="fas fa-id-card-alt"></i>
                             <p> Profil </p>
                         </a>
                     </li>
@@ -94,14 +94,27 @@
                     </li>
                     <li class="nav-item">
                         <a href="<?= base_url('admin/tagihan') ?>">
-                            <i class="fas fa-money-bill-wave"></i>
+                            <i class="fas fa-hand-holding-usd"></i>
                             <p> Tagihan </p>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?= base_url('admin/pembayaran') ?>">
-                            <i class="fas fa-check"></i>
+                            <i class="fas fa-tasks"></i>
                             <p> Pembayaran </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-section">
+                        <span class="sidebar-mini-icon">
+                            <i class="fa fa-ellipsis-h"></i>
+                        </span>
+                        <h4 class="text-section"> Navigasi </h4>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= site_url('auth/logout') ?>">
+                            <i style="color: red" class=" fas fa-sign-out-alt"></i>
+                            <p style="color: red"> Keluar </p>
                         </a>
                     </li>
 
