@@ -8,7 +8,7 @@
                 <div class="info">
                     <a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
                         <span>
-                            Hizrian
+                            <?= $this->session->userdata('nama_pelanggan') ?>
                             <span class="user-level"> Pelanggan </span>
                             <span class="caret"></span>
                         </span>
@@ -44,8 +44,8 @@
                     <h4 class="text-section"> Halaman Utama </h4>
                 </li>
                 <li class="nav-item">
-                    <a href="index.html">
-                        <i class="fas fa-home"></i>
+                    <a href="<?= base_url('pelanggan') ?>">
+                        <i class="fas fa-door-open"></i>
                         <p> Beranda </p>
                     </a>
                     <a href="index.html">

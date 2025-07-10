@@ -7,8 +7,9 @@ class Admin extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        // Cek session admin jika perlu
-        // if($this->session->userdata('level') != 'admin') redirect('auth/login');
+        if (!$this->session->userdata('login')) {
+            redirect('auth/login');
+        }
     }
 
     public function index()

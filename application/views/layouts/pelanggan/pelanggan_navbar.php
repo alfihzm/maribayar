@@ -41,8 +41,8 @@
                                 <div class="avatar-lg"><img src="assets/img/profile.jpg" alt="image profile"
                                         class="avatar-img rounded"></div>
                                 <div class="u-text">
-                                    <h4>Hizrian</h4>
-                                    <p class="text-muted">hello@example.com</p>
+                                    <?= $this->session->userdata('nama_pelanggan') ?>
+                                    <p> <?= $this->session->userdata('username') ?> </p>
                                 </div>
                             </div>
                         </li>
@@ -53,7 +53,7 @@
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#"> Pengaturan Akun </a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#"> Keluar </a>
+                            <a class="dropdown-item" href="<?= site_url('auth/logout') ?>"> Keluar </a>
                         </li>
                     </ul>
                 </li>

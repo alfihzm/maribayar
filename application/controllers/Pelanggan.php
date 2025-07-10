@@ -7,8 +7,9 @@ class Pelanggan extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        // Cek session login pelanggan jika sudah dibuat
-        // if (!$this->session->userdata('id_pelanggan')) redirect('auth/login');
+        if (!$this->session->userdata('login_pelanggan')) {
+            redirect('auth/login');
+        }
     }
 
     public function index()

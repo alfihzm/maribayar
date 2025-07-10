@@ -8,9 +8,10 @@
                 <div class="info">
                     <a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
                         <span>
-                            Hizrian
-                            <span class="user-level"> Administrator </span>
-                            <span class="caret"></span>
+                            <?= $this->session->userdata('nama_admin') ?>
+                            <span class="user-level">
+                                <?= ($this->session->userdata('level') == 1) ? 'Administrator' : 'Petugas' ?>
+                            </span>
                         </span>
                     </a>
                     <div class="clearfix"></div>
@@ -44,8 +45,8 @@
                     <h4 class="text-section"> Halaman Utama </h4>
                 </li>
                 <li class="nav-item">
-                    <a href="index.html">
-                        <i class="fas fa-home"></i>
+                    <a href="<?= base_url('admin') ?>">
+                        <i class="fas fa-door-open"></i>
                         <p> Beranda </p>
                     </a>
                     <a href="index.html">
@@ -67,7 +68,7 @@
                 </li>
                 <li class="nav-item">
                     <a href="index.html">
-                        <i class="fas fa-user-tie"></i>
+                        <i class="fas fa-suitcase"></i>
                         <p> Petugas </p>
                     </a>
                 </li>
