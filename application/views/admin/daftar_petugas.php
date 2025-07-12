@@ -12,7 +12,8 @@
                             <div class="card-head-row">
                                 <div class="card-title">Daftar Petugas</div>
                                 <div class="card-tools">
-                                    <a href="#" class="btn btn-primary btn-round btn-sm">
+                                    <a href="<?= base_url('admin/tambah_petugas') ?>"
+                                        class="btn btn-primary btn-round btn-sm">
                                         <i class="fas fa-user-plus"></i> Tambah Petugas
                                     </a>
                                 </div>
@@ -24,7 +25,7 @@
                                 <table class="table table-striped table-hover">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
+                                            <th>NO</th>
                                             <th>Nama</th>
                                             <th>Username</th>
                                             <th>Level</th>
@@ -33,11 +34,12 @@
                                     </thead>
                                     <tbody>
                                         <?php if (!empty($petugas)): ?>
-                                        <?php foreach ($petugas as $p): ?>
+                                        <?php $no = 1;
+                                            foreach ($petugas as $p): ?>
                                         <tr>
-                                            <td><?php echo $p->id_user; ?></td>
-                                            <td><?php echo $p->nama_admin; ?></td>
-                                            <td><?php echo $p->username; ?></td>
+                                            <td><?= $no++; ?></td>
+                                            <td><?= $p->nama_admin; ?></td>
+                                            <td><?= $p->username; ?></td>
                                             <td><span class="badge badge-secondary">Petugas</span></td>
                                             <td>
                                                 <a href="#" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
@@ -54,6 +56,7 @@
                                         </tr>
                                         <?php endif; ?>
                                     </tbody>
+
                                 </table>
                             </div>
                         </div>

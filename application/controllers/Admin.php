@@ -115,4 +115,29 @@ class Admin extends CI_Controller
         $this->load->view('admin/daftar_pembayaran', $data);
         $this->load->view('layouts/admin/admin_footer');
     }
+
+    public function tambah_petugas()
+    {
+        $this->load->view('layouts/admin/admin_header');
+        $this->load->view('layouts/admin/admin_navbar');
+        $this->load->view('layouts/admin/admin_sidebar');
+        $this->load->view('admin/tambah_petugas');
+        $this->load->view('layouts/admin/admin_footer');
+    }
+
+    public function simpan_petugas()
+    {
+        $this->load->model('M_user');
+
+        $data = [
+            'username'   => $this->input->post('username'),
+            'password'   => md5('petugas123'),
+            'nama_admin' => $this->input->post('nama_admin'),
+            'id_level'   => 2
+        ];
+
+        $this->M_user->insert($data);
+        $this->session->set_flashdata('success', 'Petugas berhasil ditambahkan!');
+        redirect('admin/petugas');
+    }
 }

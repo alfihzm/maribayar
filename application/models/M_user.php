@@ -31,4 +31,9 @@ class M_user extends CI_Model
     {
         return $this->db->where('id_level', 2)->get('user')->result();
     }
+
+    public function insert($data)
+    {
+        return $this->db->insert('user', $data);
+    }
 }
