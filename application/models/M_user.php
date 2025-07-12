@@ -36,4 +36,24 @@ class M_user extends CI_Model
     {
         return $this->db->insert('user', $data);
     }
+
+    public function get_by_id($id_user)
+    {
+        return $this->db->where('id_user', $id_user)
+            ->where('id_level', 2)
+            ->get('user')->row();
+    }
+
+    public function update($id_user, $data)
+    {
+        return $this->db->where('id_user', $id_user)
+            ->update('user', $data);
+    }
+
+    public function delete($id_user)
+    {
+        return $this->db->where('id_user', $id_user)
+            ->where('id_level', 2)
+            ->delete('user');
+    }
 }

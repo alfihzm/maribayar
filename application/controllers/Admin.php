@@ -140,4 +140,55 @@ class Admin extends CI_Controller
         $this->session->set_flashdata('success', 'Petugas berhasil ditambahkan!');
         redirect('admin/petugas');
     }
+
+    public function detail_petugas($id)
+    {
+        $this->load->model('M_user');
+        $petugas = $this->M_user->get_by_id($id);
+
+        if (!$petugas) {
+            show_404();
+        }
+
+        $data = [
+            'user_id'     => $petugas->id_user,
+            'user_name'   => $petugas->nama_admin,
+            'username'    => $petugas->username,
+            'user_level'  => $petugas->id_level
+        ];
+
+        $this->load->view('layouts/admin/admin_header');
+        $this->load->view('layouts/admin/admin_navbar');
+        $this->load->view('layouts/admin/admin_sidebar');
+        $this->load->view('admin/detail_petugas', $data);
+        $this->load->view('layouts/admin/admin_footer');
+    }
+
+    public function update_petugas($id)
+    {
+        $this->load->model('M_user');
+
+        $data = [
+            'nama_admin' => $this->input->post('nama_admin'),
+            'username'   => $this->input->post('username'),
+        ];
+
+        $this->M_user->update($id, $data);
+        $this->session->set_flashdata('success', 'Data petugas berhasil diperbarui!');
+        redirect('admin/detail_petugas/' . $id);
+    }
+
+    public function hapus_petugas($id)
+    {
+        $this->load->model('M_user');
+
+        $hapus = $this->M_user->delete($id);
+        if ($hapus) {
+            $this->session->set_flashdata('success', 'Petugas berhasil dihapus.');
+        } else {
+            $this->session->set_flashdata('error', 'Gagal menghapus petugas.');
+        }
+
+        redirect('admin/petugas');
+    }
 }

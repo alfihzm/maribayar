@@ -5,6 +5,18 @@
                 <h4 class="page-title">Data Petugas</h4>
             </div>
 
+            <?php if ($this->session->flashdata('success')): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?= $this->session->flashdata('success') ?>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            <?php elseif ($this->session->flashdata('error')): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?= $this->session->flashdata('error') ?>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            <?php endif; ?>
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -42,11 +54,15 @@
                                             <td><?= $p->username; ?></td>
                                             <td><span class="badge badge-secondary">Petugas</span></td>
                                             <td>
-                                                <a href="#" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
-                                                <a href="#" class="btn btn-sm btn-warning"><i
-                                                        class="fas fa-edit"></i></a>
-                                                <a href="#" class="btn btn-sm btn-danger"><i
-                                                        class="fas fa-trash"></i></a>
+                                                <a href="<?= base_url('admin/detail_petugas/' . $p->id_user) ?>"
+                                                    class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="<?= base_url('admin/hapus_petugas/' . $p->id_user) ?>"
+                                                    class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Yakin ingin menghapus petugas ini?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                         <?php endforeach; ?>
@@ -60,7 +76,6 @@
                                 </table>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
