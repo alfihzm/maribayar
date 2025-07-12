@@ -41,6 +41,58 @@ class Admin extends CI_Controller
         $this->load->view('layouts/admin/admin_footer');
     }
 
+    public function update_profil()
+    {
+        $this->load->model('M_user');
+
+        $id_user = $this->session->userdata('id_user');
+        $data = [
+            'nama_admin' => $this->input->post('nama_admin'),
+            'username'   => $this->input->post('username')
+        ];
+
+        $this->M_user->update($id_user, $data);
+
+        $this->session->set_userdata('nama_admin', $data['nama_admin']);
+        $this->session->set_userdata('username', $data['username']);
+
+        $this->session->set_flashdata('success', 'Profil berhasil diperbarui!');
+        redirect('admin/profil');
+    }
+
+    public function ubah_password()
+    {
+        $this->load->view('layouts/admin/admin_header');
+        $this->load->view('layouts/admin/admin_navbar');
+        $this->load->view('layouts/admin/admin_sidebar');
+        $this->load->view('admin/ubah_password');
+        $this->load->view('layouts/admin/admin_footer');
+    }
+
+    public function proses_ubah_password()
+    {
+        $this->load->model('M_user');
+
+        $id_user       = $this->session->userdata('id_user');
+        $password_lama = md5($this->input->post('password_lama'));
+        $password_baru = $this->input->post('password_baru');
+        $konfirmasi    = $this->input->post('konfirmasi_password');
+
+        $user = $this->M_user->get_by_id($id_user);
+
+        if ($user->password != $password_lama) {
+            $this->session->set_flashdata('error', 'Password lama salah!');
+            redirect('admin/ubah_password');
+        } elseif ($password_baru != $konfirmasi) {
+            $this->session->set_flashdata('error', 'Password baru dan konfirmasi tidak sama!');
+            redirect('admin/ubah_password');
+        } else {
+            $this->M_user->update($id_user, ['password' => md5($password_baru)]);
+            $this->session->set_flashdata('success', 'Password berhasil diubah!');
+            redirect('admin/ubah_password');
+        }
+    }
+
     public function pelanggan()
     {
         $this->load->model('M_pelanggan');
