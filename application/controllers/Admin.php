@@ -276,8 +276,66 @@ class Admin extends CI_Controller
         $this->load->view('layouts/admin/admin_header');
         $this->load->view('layouts/admin/admin_navbar');
         $this->load->view('layouts/admin/admin_sidebar');
-        $this->load->view('admin/daftar_tarif', $data);
+        $this->load->view('admin/tarif/daftar_tarif', $data);
         $this->load->view('layouts/admin/admin_footer');
+    }
+
+    public function tambah_tarif()
+    {
+        $this->load->view('layouts/admin/admin_header');
+        $this->load->view('layouts/admin/admin_navbar');
+        $this->load->view('layouts/admin/admin_sidebar');
+        $this->load->view('admin/tarif/tambah_tarif');
+        $this->load->view('layouts/admin/admin_footer');
+    }
+
+    public function simpan_tarif()
+    {
+        $this->load->model('M_tarif');
+
+        $data = [
+            'daya' => $this->input->post('daya'),
+            'tarifperkwh' => $this->input->post('tarifperkwh')
+        ];
+
+        $this->M_tarif->insert($data);
+        $this->session->set_flashdata('success', 'Tarif berhasil ditambahkan!');
+        redirect('admin/tarif');
+    }
+
+    public function edit_tarif($id)
+    {
+        $this->load->model('M_tarif');
+        $data['tarif'] = $this->M_tarif->get_by_id($id);
+
+        $this->load->view('layouts/admin/admin_header');
+        $this->load->view('layouts/admin/admin_navbar');
+        $this->load->view('layouts/admin/admin_sidebar');
+        $this->load->view('admin/tarif/edit_tarif', $data);
+        $this->load->view('layouts/admin/admin_footer');
+    }
+
+    public function update_tarif()
+    {
+        $this->load->model('M_tarif');
+
+        $id = $this->input->post('id_tarif');
+        $data = [
+            'daya' => $this->input->post('daya'),
+            'tarifperkwh' => $this->input->post('tarifperkwh')
+        ];
+
+        $this->M_tarif->update($id, $data);
+        $this->session->set_flashdata('success', 'Tarif berhasil diperbarui!');
+        redirect('admin/tarif');
+    }
+
+    public function hapus_tarif($id)
+    {
+        $this->load->model('M_tarif');
+        $this->M_tarif->delete($id);
+        $this->session->set_flashdata('success', 'Tarif berhasil dihapus!');
+        redirect('admin/tarif');
     }
 
     public function penggunaan()
@@ -291,7 +349,6 @@ class Admin extends CI_Controller
         $this->load->view('admin/daftar_penggunaan', $data);
         $this->load->view('layouts/admin/admin_footer');
     }
-
 
     public function tagihan()
     {
