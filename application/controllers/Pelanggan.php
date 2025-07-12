@@ -14,11 +14,269 @@ class Pelanggan extends CI_Controller
 
     public function index()
     {
-        // Misal nanti akan ambil data tagihan atau penggunaan dari model
         $this->load->view('layouts/pelanggan/pelanggan_header');
         $this->load->view('layouts/pelanggan/pelanggan_navbar');
         $this->load->view('layouts/pelanggan/pelanggan_sidebar');
         $this->load->view('pelanggan/dashboard');
         $this->load->view('layouts/pelanggan/pelanggan_footer');
+    }
+
+    public function profil()
+    {
+        $this->load->model('M_pelanggan');
+        $id_pelanggan = $this->session->userdata('id_pelanggan');
+        $pelanggan = $this->M_pelanggan->get_by_id($id_pelanggan);
+
+        $data = [
+            'id_pelanggan'   => $pelanggan->id_pelanggan,
+            'nama_pelanggan' => $pelanggan->nama_pelanggan,
+            'username'       => $pelanggan->username,
+            'alamat'         => $pelanggan->alamat,
+            'nomor_kwh'      => $pelanggan->nomor_kwh,
+            'daya'           => $pelanggan->daya,
+            'tarifperkwh'    => $pelanggan->tarifperkwh,
+        ];
+
+        $this->load->view('layouts/pelanggan/pelanggan_header');
+        $this->load->view('layouts/pelanggan/pelanggan_navbar');
+        $this->load->view('layouts/pelanggan/pelanggan_sidebar');
+        $this->load->view('pelanggan/profil', $data);
+        $this->load->view('layouts/pelanggan/pelanggan_footer');
+    }
+
+    public function ubah_password()
+    {
+        $this->load->view('layouts/pelanggan/pelanggan_header');
+        $this->load->view('layouts/pelanggan/pelanggan_navbar');
+        $this->load->view('layouts/pelanggan/pelanggan_sidebar');
+        $this->load->view('pelanggan/ubah_password');
+        $this->load->view('layouts/pelanggan/pelanggan_footer');
+    }
+
+    public function update_password()
+    {
+        $this->load->model('M_pelanggan');
+        $id = $this->session->userdata('id_pelanggan');
+
+        $password_lama = $this->input->post('password_lama');
+        $password_baru = $this->input->post('password_baru');
+        $konfirmasi_password = $this->input->post('konfirmasi_password');
+
+        $pelanggan = $this->M_pelanggan->get_by_id($id);
+
+        if (!password_verify($password_lama, $pelanggan->password)) {
+            $this->session->set_flashdata('error', 'Password lama salah!');
+            redirect('pelanggan/ubah_password');
+        }
+
+        if ($password_baru != $konfirmasi_password) {
+            $this->session->set_flashdata('error', 'Konfirmasi password tidak cocok!');
+            redirect('pelanggan/ubah_password');
+        }
+
+        $data = ['password' => password_hash($password_baru, PASSWORD_DEFAULT)];
+        $this->M_pelanggan->update($id, $data);
+
+        $this->session->set_flashdata('success', 'Password berhasil diubah!');
+        redirect('pelanggan/ubah_password');
+    }
+
+    public function update_profil()
+    {
+        $this->load->model('M_pelanggan');
+
+        $id = $this->input->post('id_pelanggan');
+        $nama = $this->input->post('nama_pelanggan');
+        $username = $this->input->post('username');
+        $alamat = $this->input->post('alamat');
+
+        $data = [
+            'nama_pelanggan' => $nama,
+            'username'       => $username,
+            'alamat'         => $alamat
+        ];
+
+        $update = $this->M_pelanggan->update($id, $data);
+
+        if ($update) {
+            $this->session->set_flashdata('success', 'Profil berhasil diperbarui!');
+            $this->session->set_userdata('nama_pelanggan', $nama);
+            $this->session->set_userdata('username', $username);
+        } else {
+            $this->session->set_flashdata('error', 'Gagal memperbarui profil.');
+        }
+
+        redirect('pelanggan/profil');
+    }
+
+    public function penggunaan()
+    {
+        $this->load->model('M_penggunaan');
+        $id = $this->session->userdata('id_pelanggan');
+
+        $data['penggunaan'] = $this->M_penggunaan->get_by_pelanggan($id);
+
+        $this->load->view('layouts/pelanggan/pelanggan_header');
+        $this->load->view('layouts/pelanggan/pelanggan_navbar');
+        $this->load->view('layouts/pelanggan/pelanggan_sidebar');
+        $this->load->view('pelanggan/penggunaan/penggunaan', $data);
+        $this->load->view('layouts/pelanggan/pelanggan_footer');
+    }
+
+    public function tambah_penggunaan()
+    {
+        $this->load->model(['M_penggunaan', 'M_pelanggan']);
+
+        $id = $this->session->userdata('id_pelanggan');
+        $pelanggan = $this->M_pelanggan->get_by_id($id);
+        $last = $this->M_penggunaan->get_last_meter($id);
+
+        $data = [
+            'meter_awal'     => $last ? $last->meter_akhir : 0,
+            'bulan'          => date('F'),
+            'tahun'          => date('Y'),
+            'id_pelanggan'   => $pelanggan->id_pelanggan,
+            'nama_pelanggan' => $pelanggan->nama_pelanggan,
+            'tarifperkwh'    => $pelanggan->tarifperkwh,
+            'daya'           => $pelanggan->daya
+        ];
+
+        $this->load->view('layouts/pelanggan/pelanggan_header');
+        $this->load->view('layouts/pelanggan/pelanggan_navbar');
+        $this->load->view('layouts/pelanggan/pelanggan_sidebar');
+        $this->load->view('pelanggan/penggunaan/tambah_penggunaan', $data);
+        $this->load->view('layouts/pelanggan/pelanggan_footer');
+    }
+
+    public function simpan_penggunaan()
+    {
+        $this->load->model(['M_penggunaan', 'M_tagihan', 'M_pelanggan']);
+
+        $id_pelanggan = $this->session->userdata('id_pelanggan');
+        $pelanggan = $this->M_pelanggan->get_by_id($id_pelanggan);
+
+        $id_penggunaan = 'PGN' . date('ymd') . sprintf("%03d", rand(1, 999));
+        $meter_awal = $this->input->post('meter_awal');
+        $meter_akhir = $this->input->post('meter_akhir');
+
+        $data = [
+            'id_penggunaan' => $id_penggunaan,
+            'id_pelanggan'  => $id_pelanggan,
+            'bulan'         => $this->input->post('bulan'),
+            'tahun'         => $this->input->post('tahun'),
+            'meter_awal'    => $meter_awal,
+            'meter_akhir'   => $meter_akhir,
+        ];
+
+        $this->M_penggunaan->insert($data);
+
+        $jumlah_meter = $meter_akhir - $meter_awal;
+        $tarif_perkwh = $pelanggan->tarifperkwh;
+        $biaya_admin = 2500;
+        $jumlah_bayar = ($jumlah_meter * $tarif_perkwh) + $biaya_admin;
+
+        $data_tagihan = [
+            'id_tagihan'     => 'TG' . date('ymd') . sprintf("%03d", rand(1, 999)),
+            'id_penggunaan'  => $id_penggunaan,
+            'id_pelanggan'   => $id_pelanggan,
+            'jumlah_meter'   => $jumlah_meter,
+            'jumlah_bayar'   => $jumlah_bayar,
+            'status'         => 'Belum Lunas'
+        ];
+
+        $this->M_tagihan->insert($data_tagihan);
+        $this->session->set_flashdata('success', 'Penggunaan & tagihan berhasil disimpan!');
+        redirect('pelanggan/penggunaan');
+    }
+
+    public function hapus_penggunaan($id_penggunaan)
+    {
+        $this->load->model('M_penggunaan');
+        $this->load->model('M_tagihan');
+        $this->load->model('M_pembayaran');
+
+        $tagihan = $this->M_tagihan->get_by_penggunaan($id_penggunaan);
+
+        if ($tagihan) {
+            $this->M_pembayaran->delete_by_tagihan($tagihan->id_tagihan);
+
+            $this->M_tagihan->delete_by_penggunaan($id_penggunaan);
+        }
+
+        $this->M_penggunaan->delete($id_penggunaan);
+
+        $this->session->set_flashdata('success', 'Data penggunaan dan relasi berhasil dihapus!');
+        redirect('pelanggan/penggunaan');
+    }
+
+
+
+    public function tagihan()
+    {
+        $this->load->model('M_tagihan');
+        $id = $this->session->userdata('id_pelanggan');
+
+        $data['tagihan'] = $this->M_tagihan->get_by_pelanggan($id);
+
+        $this->load->view('layouts/pelanggan/pelanggan_header');
+        $this->load->view('layouts/pelanggan/pelanggan_navbar');
+        $this->load->view('layouts/pelanggan/pelanggan_sidebar');
+        $this->load->view('pelanggan/tagihan/tagihan', $data);
+        $this->load->view('layouts/pelanggan/pelanggan_footer');
+    }
+
+    public function detail_tagihan($id)
+    {
+        $this->load->model('M_tagihan');
+
+        $tagihan = $this->M_tagihan->get_detail($id);
+        if (!$tagihan) {
+            show_404();
+        }
+
+        $data['tagihan'] = $tagihan;
+
+        $this->load->view('layouts/pelanggan/pelanggan_header');
+        $this->load->view('layouts/pelanggan/pelanggan_navbar');
+        $this->load->view('layouts/pelanggan/pelanggan_sidebar');
+        $this->load->view('pelanggan/tagihan/detail_tagihan', $data);
+        $this->load->view('layouts/pelanggan/pelanggan_footer');
+    }
+
+    public function bayar($id_tagihan)
+    {
+        $this->load->model('M_tagihan');
+
+        $tagihan = $this->M_tagihan->get_detail($id_tagihan);
+        if (!$tagihan || $tagihan->status == 'Lunas') {
+            show_404();
+        }
+
+        $data['tagihan'] = $tagihan;
+
+        $this->load->view('layouts/pelanggan/pelanggan_header');
+        $this->load->view('layouts/pelanggan/pelanggan_navbar');
+        $this->load->view('layouts/pelanggan/pelanggan_sidebar');
+        $this->load->view('pelanggan/tagihan/form_pembayaran', $data);
+        $this->load->view('layouts/pelanggan/pelanggan_footer');
+    }
+
+    public function proses_pembayaran()
+    {
+        $this->load->model(['M_pembayaran']);
+
+        $data = [
+            'id_pembayaran'       => 'PB' . date('ymd') . sprintf("%03d", rand(1, 999)),
+            'id_tagihan'          => $this->input->post('id_tagihan'),
+            'id_pelanggan'        => $this->session->userdata('id_pelanggan'),
+            'tanggal_pembayaran'  => $this->input->post('tanggal_bayar'),
+            'total_bayar'         => $this->input->post('jumlah_bayar'),
+            'status'              => 'Menunggu Konfirmasi'
+        ];
+
+        $this->M_pembayaran->insert($data);
+
+        $this->session->set_flashdata('success', 'Pembayaran berhasil! Menunggu konfirmasi dari admin atau petugas.');
+        redirect('pelanggan/tagihan');
     }
 }

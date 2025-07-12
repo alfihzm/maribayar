@@ -14,4 +14,14 @@ class M_pembayaran extends CI_Model
             ->get()
             ->result();
     }
+
+    public function insert($data)
+    {
+        return $this->db->insert('pembayaran', $data);
+    }
+
+    public function delete_by_tagihan($id_tagihan)
+    {
+        return $this->db->delete('pembayaran', ['id_tagihan' => $id_tagihan]);
+    }
 }

@@ -358,10 +358,54 @@ class Admin extends CI_Controller
         $this->load->view('layouts/admin/admin_header');
         $this->load->view('layouts/admin/admin_navbar');
         $this->load->view('layouts/admin/admin_sidebar');
-        $this->load->view('admin/daftar_tagihan', $data);
+        $this->load->view('admin/tagihan/daftar_tagihan', $data);
         $this->load->view('layouts/admin/admin_footer');
     }
 
+    public function detail_tagihan($id_tagihan)
+    {
+        $this->load->model(['M_tagihan', 'M_pelanggan', 'M_penggunaan']);
+
+        $tagihan = $this->M_tagihan->get_by_id($id_tagihan);
+        if (!$tagihan) {
+            $this->session->set_flashdata('error', 'Tagihan tidak ditemukan.');
+            redirect('admin/tagihan');
+        }
+
+        $pelanggan = $this->M_pelanggan->get_by_id($tagihan->id_pelanggan);
+        $penggunaan = $this->M_penggunaan->get_by_id($tagihan->id_penggunaan);
+
+        $data = [
+            'tagihan' => $tagihan,
+            'pelanggan' => $pelanggan,
+            'penggunaan' => $penggunaan,
+            'total_tagihan' => ($tagihan->jumlah_meter * $pelanggan->tarifperkwh),
+            'biaya_admin' => 2500,
+            'total_bayar' => ($tagihan->jumlah_meter * $pelanggan->tarifperkwh) + 2500
+        ];
+
+        $this->load->view('layouts/admin/admin_header');
+        $this->load->view('layouts/admin/admin_navbar');
+        $this->load->view('layouts/admin/admin_sidebar');
+        $this->load->view('admin/tagihan/detail_tagihan', $data);
+        $this->load->view('layouts/admin/admin_footer');
+    }
+
+    public function setujui_pembayaran($id_tagihan)
+    {
+        $this->load->model('M_tagihan');
+        $this->M_tagihan->update($id_tagihan, ['status' => 'Lunas']);
+        $this->session->set_flashdata('success', 'Pembayaran telah disetujui dan tagihan ditandai sebagai Lunas.');
+        redirect('admin/tagihan');
+    }
+
+    public function tolak_pembayaran($id_tagihan)
+    {
+        $this->load->model('M_tagihan');
+        $this->M_tagihan->update($id_tagihan, ['status' => 'Belum Lunas']);
+        $this->session->set_flashdata('success', 'Pembayaran ditolak, status tagihan diubah menjadi Belum Lunas.');
+        redirect('admin/tagihan');
+    }
 
     public function pembayaran()
     {
@@ -373,5 +417,19 @@ class Admin extends CI_Controller
         $this->load->view('layouts/admin/admin_sidebar');
         $this->load->view('admin/daftar_pembayaran', $data);
         $this->load->view('layouts/admin/admin_footer');
+    }
+
+    public function konfirmasi_pembayaran($id_pembayaran)
+    {
+        $this->load->model(['M_pembayaran', 'M_tagihan']);
+
+        $pembayaran = $this->M_pembayaran->get_by_id($id_pembayaran);
+
+        $this->M_pembayaran->update($id_pembayaran, ['status' => 'Dikonfirmasi']);
+
+        $this->M_tagihan->update($pembayaran->id_tagihan, ['status' => 'Lunas']);
+
+        $this->session->set_flashdata('success', 'Pembayaran berhasil dikonfirmasi!');
+        redirect('admin/pembayaran');
     }
 }

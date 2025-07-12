@@ -19,12 +19,20 @@ class M_user extends CI_Model
             ->row();
     }
 
-    public function cek_login_pelanggan($username, $password)
+    public function cek_login_pelanggan($username, $raw_password)
     {
-        return $this->db->where('username', $username)
-            ->where('password', $password)
-            ->get('pelanggan')
-            ->row();
+        $user = $this->db->get_where('pelanggan', ['username' => $username])->row();
+
+        if ($user && password_verify($raw_password, $user->password)) {
+            return $user;
+        } else {
+            return false;
+        }
+    }
+
+    public function get_pelanggan_by_username($username)
+    {
+        return $this->db->get_where('pelanggan', ['username' => $username])->row();
     }
 
     public function get_petugas()

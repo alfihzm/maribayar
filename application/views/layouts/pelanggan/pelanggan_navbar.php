@@ -32,14 +32,15 @@
                 <li class="nav-item dropdown hidden-caret">
                     <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
                         <div class="avatar-sm">
-                            <img src="assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle">
+                            <img src="<?= base_url('assets/img/profile.jpg') ?>" alt="..."
+                                class="avatar-img rounded-circle">
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-user animated fadeIn">
                         <li>
                             <div class="user-box">
-                                <div class="avatar-lg"><img src="assets/img/profile.jpg" alt="image profile"
-                                        class="avatar-img rounded"></div>
+                                <div class="avatar-lg"><img src="<?= base_url('assets/img/profile.jpg') ?>"
+                                        alt="image profile" class="avatar-img rounded"></div>
                                 <div class="u-text">
                                     <?= $this->session->userdata('nama_pelanggan') ?>
                                     <p> <?= $this->session->userdata('username') ?> </p>

@@ -18,26 +18,28 @@ class Auth extends CI_Controller
     public function proses_login()
     {
         $username = $this->input->post('username');
-        $password = md5($this->input->post('password'));
+        $password = $this->input->post('password');
 
-        $admin = $this->m_user->cek_login_admin($username, $password);
+        // Admin tetap pakai md5
+        $admin = $this->m_user->cek_login_admin($username, md5($password));
         if ($admin) {
             $this->session->set_userdata([
-                'id_user'    => $admin->id_user,
-                'username'   => $admin->username,
-                'nama_admin' => $admin->nama_admin,
-                'level'      => $admin->id_level,
-                'login'      => TRUE
+                'id_user'     => $admin->id_user,
+                'username'    => $admin->username,
+                'nama_admin'  => $admin->nama_admin,
+                'level'       => $admin->id_level,
+                'login'       => TRUE
             ]);
             redirect('admin');
         }
 
-        $pelanggan = $this->m_user->cek_login_pelanggan($username, $password);
-        if ($pelanggan) {
+        // Pelanggan pakai password_verify
+        $pelanggan = $this->m_user->get_pelanggan_by_username($username);
+        if ($pelanggan && password_verify($password, $pelanggan->password)) {
             $this->session->set_userdata([
-                'id_pelanggan'   => $pelanggan->id_pelanggan,
-                'username'       => $pelanggan->username,
-                'nama_pelanggan' => $pelanggan->nama_pelanggan,
+                'id_pelanggan'    => $pelanggan->id_pelanggan,
+                'username'        => $pelanggan->username,
+                'nama_pelanggan'  => $pelanggan->nama_pelanggan,
                 'login_pelanggan' => TRUE
             ]);
             redirect('pelanggan');
@@ -59,7 +61,7 @@ class Auth extends CI_Controller
 
         $data = [
             'username'        => $this->input->post('username'),
-            'password'        => md5($password),
+            'password'        => password_hash($password, PASSWORD_DEFAULT),
             'nomor_kwh'       => $this->input->post('nomor_kwh'),
             'nama_pelanggan'  => $this->input->post('nama_pelanggan'),
             'alamat'          => $this->input->post('alamat'),
@@ -71,6 +73,8 @@ class Auth extends CI_Controller
         $this->session->set_flashdata('success', 'Registrasi berhasil, silakan login!');
         redirect('auth/login');
     }
+
+
 
     public function logout()
     {

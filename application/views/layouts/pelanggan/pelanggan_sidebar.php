@@ -48,7 +48,7 @@
                         <i class="fas fa-door-open"></i>
                         <p> Beranda </p>
                     </a>
-                    <a href="index.html">
+                    <a href="<?= base_url('pelanggan/profil'); ?>">
                         <i class="fas fa-user"></i>
                         <p> Profil </p>
                     </a>
@@ -61,13 +61,13 @@
                     <h4 class="text-section"> Informasi </h4>
                 </li>
                 <li class="nav-item">
-                    <a href="index.html">
+                    <a href="<?= base_url('pelanggan/penggunaan') ?>">
                         <i class="fas fa-bolt"></i>
                         <p> Penggunaan </p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="index.html">
+                    <a href="<?= base_url('pelanggan/tagihan') ?>">
                         <i class="fas fa-money-bill-wave"></i>
                         <p> Tagihan </p>
                     </a>
