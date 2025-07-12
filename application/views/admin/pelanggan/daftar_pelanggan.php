@@ -5,6 +5,22 @@
                 <h4 class="page-title">Data Pelanggan</h4>
             </div>
 
+            <?php if ($this->session->flashdata('success')): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?= $this->session->flashdata('success') ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?php elseif ($this->session->flashdata('error')): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?= $this->session->flashdata('error') ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <?php endif; ?>
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -12,7 +28,8 @@
                             <div class="card-head-row">
                                 <div class="card-title">Daftar Pelanggan</div>
                                 <div class="card-tools">
-                                    <a href="#" class="btn btn-primary btn-round btn-sm">
+                                    <a href="<?= base_url('admin/tambah_pelanggan') ?>"
+                                        class="btn btn-primary btn-round btn-sm">
                                         <i class="fas fa-user-plus"></i> Tambah Pelanggan
                                     </a>
                                 </div>
@@ -34,20 +51,25 @@
                                     </thead>
                                     <tbody>
                                         <?php if (!empty($pelanggan)): ?>
-                                        <?php foreach ($pelanggan as $p): ?>
+                                        <?php $no = 1;
+                                            foreach ($pelanggan as $p): ?>
                                         <tr>
-                                            <td><?php echo $p->id_pelanggan; ?></td>
+                                            <td><?= $no++; ?></td>
                                             <td><?php echo $p->nama_pelanggan; ?></td>
                                             <td><?php echo $p->username; ?></td>
                                             <td><?php echo $p->nomor_kwh; ?></td>
                                             <td><?php echo $p->daya; ?> VA</td>
                                             <td>Rp <?php echo number_format($p->tarifperkwh, 0, ',', '.'); ?></td>
                                             <td>
-                                                <a href="#" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
-                                                <a href="#" class="btn btn-sm btn-warning"><i
-                                                        class="fas fa-edit"></i></a>
-                                                <a href="#" class="btn btn-sm btn-danger"><i
-                                                        class="fas fa-trash"></i></a>
+                                                <a href="<?= base_url('admin/detail_pelanggan/' . $p->id_pelanggan) ?>"
+                                                    class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="<?= base_url('admin/hapus_pelanggan/' . $p->id_pelanggan) ?>"
+                                                    onclick="return confirm('Yakin ingin menghapus pelanggan ini?')"
+                                                    class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                         <?php endforeach; ?>
