@@ -19,7 +19,7 @@
                                 <table class="table table-striped table-hover">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
+                                            <th>NO</th>
                                             <th>Pelanggan</th>
                                             <th>Periode</th>
                                             <th>Biaya Admin</th>
@@ -30,18 +30,20 @@
                                     </thead>
                                     <tbody>
                                         <?php if (!empty($pembayaran)): ?>
+                                            <?php $no = 1; ?>
                                             <?php foreach ($pembayaran as $p): ?>
                                                 <tr>
-                                                    <td><?php echo $p->id_pembayaran; ?></td>
-                                                    <td><?php echo $p->nama_pelanggan; ?></td>
-                                                    <td><?php echo $p->bulan . ' ' . $p->tahun; ?></td>
-                                                    <td>Rp <?php echo number_format($p->biaya_admin ?? 2500, 0, ',', '.'); ?>
-                                                    </td>
-                                                    <td>Rp <?php echo number_format($p->total_bayar, 0, ',', '.'); ?></td>
-                                                    <td><?php echo date('d-m-Y', strtotime($p->tanggal_pembayaran)); ?></td>
-                                                    <td><?php echo $p->nama_admin ?? '-'; ?></td>
+                                                    <td><?= $no++; ?></td>
+                                                    <td><?= $p->nama_pelanggan; ?></td>
+                                                    <td><?= $p->bulan . ' ' . $p->tahun; ?></td>
+                                                    <!-- <td>Rp <?= number_format($p->biaya_admin ?? 2500, 0, ',', '.'); ?></td> -->
+                                                    <td>Rp2500</td>
+                                                    <td>Rp <?= number_format($p->total_bayar, 0, ',', '.'); ?></td>
+                                                    <td><?= date('d-m-Y', strtotime($p->tanggal_pembayaran)); ?></td>
+                                                    <td><?= $p->nama_admin ?? '-'; ?></td>
                                                 </tr>
                                             <?php endforeach; ?>
+
                                         <?php else: ?>
                                             <tr>
                                                 <td colspan="7" class="text-center text-muted">Belum ada data pembayaran.

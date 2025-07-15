@@ -3,11 +3,10 @@
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title> Administrator Login </title>
+    <title> MariBayar Login </title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     <link rel="icon" href="<?= base_url('assets/img/icon.ico" type="image/x-icon') ?>" />
 
-    <!-- Fonts and icons -->
     <script src="<?= base_url('assets/js/plugin/webfont/webfont.min.js') ?>"></script>
     <script>
         WebFont.load({
@@ -33,6 +32,25 @@
     <div class="wrapper wrapper-login">
         <div class="container container-login animated fadeIn">
             <h3 class="text-center"> MariBayar </h3>
+
+            <?php if ($this->session->flashdata('error')) : ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?= $this->session->flashdata('error') ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($this->session->flashdata('success')) : ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $this->session->flashdata('success') ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            <?php endif; ?>
+
             <form action="<?= site_url('auth/proses_login') ?>" method="post">
                 <div class="form-group form-floating-label">
                     <input id="username" name="username" type="text" class="form-control input-border-bottom" required>
