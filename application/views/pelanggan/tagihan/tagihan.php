@@ -4,10 +4,10 @@
             <h3 class="fw-bold">Data Tagihan</h3>
 
             <?php if ($this->session->flashdata('success')): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <?= $this->session->flashdata('success') ?>
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-            </div>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?= $this->session->flashdata('success') ?>
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                </div>
             <?php endif; ?>
 
             <div class="card">
@@ -26,31 +26,32 @@
                             </thead>
                             <tbody>
                                 <?php if (!empty($tagihan)): ?>
-                                <?php foreach ($tagihan as $t): ?>
-                                <tr>
-                                    <td>
-                                        <a href="<?= base_url('pelanggan/detail_tagihan/' . $t->id_tagihan) ?>"
-                                            class="btn btn-sm btn-info">
-                                            <i class="fas fa-info-circle"></i> Detail
-                                        </a>
-                                    </td>
-                                    <td><?= $t->id_tagihan ?></td>
-                                    <td><?= $t->bulan ?> <?= $t->tahun ?></td>
-                                    <td><?= $t->jumlah_meter ?></td>
-                                    <td>Rp <?= number_format($t->jumlah_bayar, 0, ',', '.') ?></td>
-                                    <td>
-                                        <?php if ($t->status == 'Lunas'): ?>
-                                        <span class="badge badge-success">Lunas</span>
-                                        <?php else: ?>
-                                        <span class="badge badge-danger">Belum Lunas</span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
+                                    <?php foreach ($tagihan as $row): ?>
+                                        <tr>
+                                            <td>
+                                                <a href="<?= base_url('pelanggan/detail_tagihan/' . $row->id_tagihan) ?>"
+                                                    class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-info-circle"></i> Detail
+                                                </a>
+                                            </td>
+                                            <td><?= $row->id_tagihan ?></td> <!-- ✅ tambahkan ini jika tidak ada -->
+                                            <td><?= $row->bulan . ' ' . $row->tahun ?></td>
+                                            <td><?= $row->jumlah_meter ?></td>
+                                            <td>Rp <?= number_format($row->jumlah_bayar, 0, ',', '.') ?></td>
+                                            <td>
+                                                <?php if ($row->status == 'Lunas'): ?>
+                                                    <span class="badge badge-success">Lunas</span>
+                                                <?php else: ?>
+                                                    <span class="badge badge-danger">Belum Lunas</span>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+
                                 <?php else: ?>
-                                <tr>
-                                    <td colspan="6" class="text-center text-muted">Belum ada data tagihan.</td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">Belum ada data tagihan.</td>
+                                    </tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>

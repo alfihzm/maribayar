@@ -73,7 +73,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="index.html">
+                    <a href="<?= base_url('pelanggan/daftar_pembayaran') ?>">
                         <i class="fas fa-check"></i>
                         <p> Pembayaran </p>
                     </a>

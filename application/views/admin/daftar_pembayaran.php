@@ -35,10 +35,11 @@
                                                     <td><?php echo $p->id_pembayaran; ?></td>
                                                     <td><?php echo $p->nama_pelanggan; ?></td>
                                                     <td><?php echo $p->bulan . ' ' . $p->tahun; ?></td>
-                                                    <td>Rp <?php echo number_format($p->biaya_admin, 0, ',', '.'); ?></td>
+                                                    <td>Rp <?php echo number_format($p->biaya_admin ?? 2500, 0, ',', '.'); ?>
+                                                    </td>
                                                     <td>Rp <?php echo number_format($p->total_bayar, 0, ',', '.'); ?></td>
                                                     <td><?php echo date('d-m-Y', strtotime($p->tanggal_pembayaran)); ?></td>
-                                                    <td><?php echo $p->nama_admin; ?></td>
+                                                    <td><?php echo $p->nama_admin ?? '-'; ?></td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         <?php else: ?>

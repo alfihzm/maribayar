@@ -14,10 +14,20 @@ class Pelanggan extends CI_Controller
 
     public function index()
     {
+        $this->load->model(['M_penggunaan', 'M_tagihan', 'M_pembayaran']);
+
+        $id = $this->session->userdata('id_pelanggan');
+
+        $data = [
+            'total_penggunaan'  => $this->M_penggunaan->count_by_pelanggan($id),
+            'total_tagihan'     => $this->M_tagihan->count_by_status($id, 'Belum Lunas'),
+            'total_pembayaran'  => $this->M_pembayaran->count_by_pelanggan($id)
+        ];
+
         $this->load->view('layouts/pelanggan/pelanggan_header');
         $this->load->view('layouts/pelanggan/pelanggan_navbar');
         $this->load->view('layouts/pelanggan/pelanggan_sidebar');
-        $this->load->view('pelanggan/dashboard');
+        $this->load->view('pelanggan/dashboard', $data);
         $this->load->view('layouts/pelanggan/pelanggan_footer');
     }
 
@@ -155,60 +165,62 @@ class Pelanggan extends CI_Controller
         $id_pelanggan = $this->session->userdata('id_pelanggan');
         $pelanggan = $this->M_pelanggan->get_by_id($id_pelanggan);
 
+        $bulan = $this->input->post('bulan');
+        $tahun = $this->input->post('tahun');
+
+        $this->load->model('M_penggunaan');
+        $cek_duplikat = $this->M_penggunaan->cek_penggunaan_bulanan($id_pelanggan, $bulan, $tahun);
+        if ($cek_duplikat) {
+            $this->session->set_flashdata('error', 'Penggunaan untuk bulan ini sudah ada!');
+            redirect('pelanggan/penggunaan');
+        }
+
         $id_penggunaan = 'PGN' . date('ymd') . sprintf("%03d", rand(1, 999));
         $meter_awal = $this->input->post('meter_awal');
         $meter_akhir = $this->input->post('meter_akhir');
 
-        $data = [
+        if ($meter_akhir <= $meter_awal) {
+            $this->session->set_flashdata('error', 'Meter akhir harus lebih besar dari meter awal!');
+            redirect('pelanggan/tambah_penggunaan');
+        }
+
+        // Simpan penggunaan
+        $data_penggunaan = [
             'id_penggunaan' => $id_penggunaan,
             'id_pelanggan'  => $id_pelanggan,
-            'bulan'         => $this->input->post('bulan'),
-            'tahun'         => $this->input->post('tahun'),
+            'bulan'         => $bulan,
+            'tahun'         => $tahun,
             'meter_awal'    => $meter_awal,
             'meter_akhir'   => $meter_akhir,
         ];
+        $this->M_penggunaan->insert($data_penggunaan);
 
-        $this->M_penggunaan->insert($data);
-
+        // Hitung dan simpan tagihan
         $jumlah_meter = $meter_akhir - $meter_awal;
         $tarif_perkwh = $pelanggan->tarifperkwh;
         $biaya_admin = 2500;
         $jumlah_bayar = ($jumlah_meter * $tarif_perkwh) + $biaya_admin;
 
-        $data_tagihan = [
-            'id_tagihan'     => 'TG' . date('ymd') . sprintf("%03d", rand(1, 999)),
-            'id_penggunaan'  => $id_penggunaan,
-            'id_pelanggan'   => $id_pelanggan,
-            'jumlah_meter'   => $jumlah_meter,
-            'jumlah_bayar'   => $jumlah_bayar,
-            'status'         => 'Belum Lunas'
-        ];
-
-        $this->M_tagihan->insert($data_tagihan);
-        $this->session->set_flashdata('success', 'Penggunaan & tagihan berhasil disimpan!');
+        $this->session->set_flashdata('success', 'Penggunaan dan tagihan berhasil disimpan.');
         redirect('pelanggan/penggunaan');
     }
 
     public function hapus_penggunaan($id_penggunaan)
     {
-        $this->load->model('M_penggunaan');
-        $this->load->model('M_tagihan');
-        $this->load->model('M_pembayaran');
+        $this->load->model(['M_penggunaan', 'M_tagihan', 'M_pembayaran']);
 
         $tagihan = $this->M_tagihan->get_by_penggunaan($id_penggunaan);
 
-        if ($tagihan) {
+        if ($tagihan && isset($tagihan->id_tagihan)) {
             $this->M_pembayaran->delete_by_tagihan($tagihan->id_tagihan);
-
             $this->M_tagihan->delete_by_penggunaan($id_penggunaan);
         }
 
         $this->M_penggunaan->delete($id_penggunaan);
 
-        $this->session->set_flashdata('success', 'Data penggunaan dan relasi berhasil dihapus!');
+        $this->session->set_flashdata('success', 'Data penggunaan dan tagihan berhasil dihapus!');
         redirect('pelanggan/penggunaan');
     }
-
 
 
     public function tagihan()
@@ -225,11 +237,15 @@ class Pelanggan extends CI_Controller
         $this->load->view('layouts/pelanggan/pelanggan_footer');
     }
 
-    public function detail_tagihan($id)
+    public function detail_tagihan($id = null)
     {
-        $this->load->model('M_tagihan');
+        if ($id === null) {
+            show_404(); // atau redirect('pelanggan/tagihan');
+        }
 
+        $this->load->model('M_tagihan');
         $tagihan = $this->M_tagihan->get_detail($id);
+
         if (!$tagihan) {
             show_404();
         }
@@ -242,6 +258,7 @@ class Pelanggan extends CI_Controller
         $this->load->view('pelanggan/tagihan/detail_tagihan', $data);
         $this->load->view('layouts/pelanggan/pelanggan_footer');
     }
+
 
     public function bayar($id_tagihan)
     {
@@ -263,7 +280,7 @@ class Pelanggan extends CI_Controller
 
     public function proses_pembayaran()
     {
-        $this->load->model(['M_pembayaran']);
+        $this->load->model(['M_pembayaran', 'M_tagihan']);
 
         $data = [
             'id_pembayaran'       => 'PB' . date('ymd') . sprintf("%03d", rand(1, 999)),
@@ -271,12 +288,30 @@ class Pelanggan extends CI_Controller
             'id_pelanggan'        => $this->session->userdata('id_pelanggan'),
             'tanggal_pembayaran'  => $this->input->post('tanggal_bayar'),
             'total_bayar'         => $this->input->post('jumlah_bayar'),
-            'status'              => 'Menunggu Konfirmasi'
+            'status'              => 'Belum Lunas'
         ];
 
         $this->M_pembayaran->insert($data);
 
-        $this->session->set_flashdata('success', 'Pembayaran berhasil! Menunggu konfirmasi dari admin atau petugas.');
+        $this->M_tagihan->update($data['id_tagihan'], ['status' => 'Belum Lunas']);
+
+        $this->session->set_flashdata('success', 'Pembayaran berhasil, menunggu konfirmasi admin.');
         redirect('pelanggan/tagihan');
+    }
+
+    public function daftar_pembayaran()
+    {
+        $this->load->model(['M_pembayaran']);
+
+        $id_pelanggan = $this->session->userdata('id_pelanggan');
+
+        // Menggunakan M_pembayaran untuk kerapihan
+        $data['histori'] = $this->M_pembayaran->get_histori_by_pelanggan($id_pelanggan);
+
+        $this->load->view('layouts/pelanggan/pelanggan_header');
+        $this->load->view('layouts/pelanggan/pelanggan_navbar');
+        $this->load->view('layouts/pelanggan/pelanggan_sidebar');
+        $this->load->view('pelanggan/pembayaran/daftar_pembayaran', $data);
+        $this->load->view('layouts/pelanggan/pelanggan_footer');
     }
 }

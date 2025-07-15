@@ -56,4 +56,18 @@ class M_penggunaan extends CI_Model
     {
         return $this->db->delete('penggunaan', ['id_penggunaan' => $id_penggunaan]);
     }
+
+    public function count_by_pelanggan($id_pelanggan)
+    {
+        return $this->db->where('id_pelanggan', $id_pelanggan)->count_all_results('penggunaan');
+    }
+
+    public function cek_penggunaan_bulanan($id_pelanggan, $bulan, $tahun)
+    {
+        return $this->db->get_where('penggunaan', [
+            'id_pelanggan' => $id_pelanggan,
+            'bulan' => $bulan,
+            'tahun' => $tahun
+        ])->row();
+    }
 }

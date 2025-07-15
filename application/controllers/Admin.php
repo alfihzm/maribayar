@@ -399,18 +399,10 @@ class Admin extends CI_Controller
         redirect('admin/tagihan');
     }
 
-    public function tolak_pembayaran($id_tagihan)
-    {
-        $this->load->model('M_tagihan');
-        $this->M_tagihan->update($id_tagihan, ['status' => 'Belum Lunas']);
-        $this->session->set_flashdata('success', 'Pembayaran ditolak, status tagihan diubah menjadi Belum Lunas.');
-        redirect('admin/tagihan');
-    }
-
     public function pembayaran()
     {
         $this->load->model('M_pembayaran');
-        $data['pembayaran'] = $this->M_pembayaran->get_all();
+        $data['pembayaran'] = $this->M_pembayaran->get_confirmed_payments();
 
         $this->load->view('layouts/admin/admin_header');
         $this->load->view('layouts/admin/admin_navbar');
@@ -419,17 +411,30 @@ class Admin extends CI_Controller
         $this->load->view('layouts/admin/admin_footer');
     }
 
-    public function konfirmasi_pembayaran($id_pembayaran)
+    public function konfirmasi_pembayaran($id_tagihan)
     {
-        $this->load->model(['M_pembayaran', 'M_tagihan']);
+        $this->load->model(['M_tagihan', 'M_pembayaran']);
 
-        $pembayaran = $this->M_pembayaran->get_by_id($id_pembayaran);
+        $tagihan_updated = $this->M_tagihan->update($id_tagihan, ['status' => 'Lunas']);
+        $pembayaran_updated = $this->M_pembayaran->update_by_tagihan($id_tagihan, ['status' => 'Dikonfirmasi']);
 
-        $this->M_pembayaran->update($id_pembayaran, ['status' => 'Dikonfirmasi']);
+        if ($tagihan_updated !== false && $pembayaran_updated !== false) {
+            $this->session->set_flashdata('success', 'Pembayaran telah dikonfirmasi dan status tagihan menjadi Lunas.');
+        } else {
+            $this->session->set_flashdata('error', 'Gagal mengkonfirmasi pembayaran, periksa kembali.');
+        }
 
-        $this->M_tagihan->update($pembayaran->id_tagihan, ['status' => 'Lunas']);
+        redirect('admin/tagihan');
+    }
 
-        $this->session->set_flashdata('success', 'Pembayaran berhasil dikonfirmasi!');
-        redirect('admin/pembayaran');
+    public function tolak_pembayaran($id_tagihan)
+    {
+        $this->load->model(['M_tagihan', 'M_pembayaran']);
+
+        $this->M_tagihan->update($id_tagihan, ['status' => 'Belum Lunas']);
+        $this->M_pembayaran->update_by_tagihan($id_tagihan, ['status' => 'Ditolak']);
+
+        $this->session->set_flashdata('success', 'Pembayaran ditolak.');
+        redirect('admin/tagihan');
     }
 }

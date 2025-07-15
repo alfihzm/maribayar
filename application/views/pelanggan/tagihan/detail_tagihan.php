@@ -39,9 +39,9 @@
                                     <th>Status</th>
                                     <td>
                                         <?php if ($tagihan->status == 'Lunas'): ?>
-                                        <span class="text-success font-weight-bold"><?= $tagihan->status ?></span>
+                                            <span class="text-success font-weight-bold"><?= $tagihan->status ?></span>
                                         <?php else: ?>
-                                        <span class="text-danger font-weight-bold"><?= $tagihan->status ?></span>
+                                            <span class="text-danger font-weight-bold"><?= $tagihan->status ?></span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -55,9 +55,12 @@
                         </div>
 
                         <div class="card-footer">
-                            <?php if ($tagihan->status == 'Belum Lunas'): ?>
-                            <a href="<?= base_url('pelanggan/bayar/' . $tagihan->id_tagihan) ?>"
-                                class="btn btn-primary btn-block">Buat Pembayaran</a>
+                            <?php if (
+                                ($tagihan->status == 'Belum Lunas' || $tagihan->status == 'Belum Dibayar') &&
+                                $tagihan->jumlah_bayar > 0
+                            ): ?>
+                                <a href="<?= base_url('pelanggan/bayar/' . $tagihan->id_tagihan) ?>"
+                                    class="btn btn-primary btn-block">Buat Pembayaran</a>
                             <?php endif; ?>
                             <a href="<?= base_url('pelanggan/tagihan') ?>" class="btn btn-link">Kembali</a>
                         </div>
